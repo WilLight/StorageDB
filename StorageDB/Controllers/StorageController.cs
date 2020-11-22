@@ -11,32 +11,32 @@ namespace StorageDB.Controllers
 {
     [ApiController]
     [Route("api/[controller]/[action]")]
-    public class ItemController : ControllerBase
+    public class StorageController : ControllerBase
     {
         private static readonly string[] Names = new[]
         {
             "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
         };
 
-        private readonly ILogger<ItemController> _logger;
-        private readonly ILiteDbItemRepository _dbItemService;
+        private readonly ILogger<StorageController> _logger;
+        private readonly ILiteDbStorageRepository _dbStorageService;
 
-        public ItemController(ILogger<ItemController> logger, ILiteDbItemRepository dbItemService)
+        public StorageController(ILogger<StorageController> logger, ILiteDbStorageRepository dbStorageService)
         {
-            _dbItemService = dbItemService;
+            _dbStorageService = dbStorageService;
             _logger = logger;
         }
 
         [HttpGet]
-        public IEnumerable<ItemModel> Get()
+        public IEnumerable<StorageModel> Get()
         {
-            return _dbItemService.FindAll().OrderBy(item => item.Name);
+            return _dbStorageService.FindAll().OrderBy(item => item.Name);
         }
 
         [HttpGet]
-        public ActionResult<ItemModel> GetOne(Guid id)
+        public ActionResult<StorageModel> GetOne(Guid id)
         {
-            var result = _dbItemService.FindOne(id);
+            var result = _dbStorageService.FindOne(id);
             if (result != default)
                 return Ok(result);
             else
@@ -44,16 +44,16 @@ namespace StorageDB.Controllers
         }
 
         [HttpGet]
-        public ActionResult<ItemModel> GenerateOne()
+        public ActionResult<StorageModel> GenerateOne()
         {
             var rng = new Random();
-            var item = new ItemModel();
+            var item = new StorageModel();
             item.Id = Guid.NewGuid();
             item.Name = Names[rng.Next(Names.Length)];
-            item.Size = (float)rng.Next(170) / 3;
-            var id = _dbItemService.Insert(item);
+            item.Capacity = rng.Next(170) * 5;
+            var id = _dbStorageService.Insert(item);
             if (id != default)
-                return CreatedAtAction("GetOne", _dbItemService.FindOne(id));
+                return CreatedAtAction("GetOne", _dbStorageService.FindOne(id));
             else
                 return BadRequest();
         }
