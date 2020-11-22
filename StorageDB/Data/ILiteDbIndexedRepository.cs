@@ -8,7 +8,6 @@ namespace StorageDB.Data
     {
          IEnumerable<TModel> FindAll();
         TModel FindOne(Guid id);
-        IEnumerable<TModel> FindRange(Guid[] ids);
         Guid Insert(TModel model);
         bool Update(TModel model);
     }
