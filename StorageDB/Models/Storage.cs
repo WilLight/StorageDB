@@ -2,7 +2,7 @@ using System;
 
 namespace StorageDB.Models
 {
-    public class Storage
+    public class StorageModel : IModelIndexed
     {
         public Guid Id { get; set; }
         public string Name { get; set; }

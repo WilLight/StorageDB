@@ -1,6 +1,8 @@
+using StorageDB.Models;
+
 namespace StorageDB.Data
 {
-    public interface ILiteDbStorageRepository
+    public interface ILiteDbStorageRepository : ILiteDbIndexedRepository<StorageModel>
     {
          
     }
