@@ -13,9 +13,6 @@
             "args": [],
             "cwd": "${workspaceFolder}/StorageDB",
             "stopAtEntry": false,
-            "serverReadyAction": {
-                "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
-            },
             "env": {
                 "ASPNETCORE_ENVIRONMENT": "Development",
                 "ASPNETCORE_URLS": "http://localhost:5000/api/"
