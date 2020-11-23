@@ -43,7 +43,31 @@ namespace StorageDB.Controllers
                 return NotFound();
         }
 
-        [HttpGet]
+        [HttpPost]
+        public ActionResult<StorageModel> InsertOne(StorageModel storage)
+        {
+            var dto = _dbStorageService.FindOne(storage.Id);
+            if (dto == null)
+                storage.Id = Guid.NewGuid();
+            else
+                return BadRequest(dto);
+            var id = _dbStorageService.Insert(storage);
+            if (id != default)
+                return CreatedAtAction("GetOne", _dbStorageService.FindOne(id));
+            else
+                return BadRequest();
+        }
+
+        [HttpPost]
+        public ActionResult<StorageModel> UpdateOne(StorageModel storage)
+        {
+            if(_dbStorageService.Update(storage))
+                return Ok();
+            else
+                return BadRequest();
+        }
+
+        [HttpPost]
         public ActionResult<StorageModel> GenerateOne()
         {
             var rng = new Random();

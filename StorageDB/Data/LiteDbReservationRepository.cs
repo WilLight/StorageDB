@@ -21,9 +21,16 @@ namespace StorageDB.Data
             return _liteDb.GetCollection<ReservationModel>("Reservation").FindAll();
         }
 
+        public IEnumerable<ReservationModel> FindWithinDateRange(ReservationModel reservation)
+        {
+            return _liteDb.GetCollection<ReservationModel>("Reservation")
+                .Find(x => x.StartDate.Date <= reservation.EndDate.Date || x.EndDate.Date >= reservation.StartDate.Date);
+        }
+
         public ReservationModel FindOne(Guid id)
         {
-            return _liteDb.GetCollection<ReservationModel>("Reservation").FindOne(reservation => reservation.Id.Equals(id));
+            return _liteDb.GetCollection<ReservationModel>("Reservation")
+                .FindOne(reservation => reservation.Id.Equals(id));
         }
         public Guid Insert(ReservationModel item)
         {
