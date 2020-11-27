@@ -26,42 +26,42 @@ namespace StorageDB.Controllers
             _logger = logger;
         }
 
-        private bool ReservationExceedsCapacity(ReservationModel reservation)
+        private int ItemsPerCell(float itemSize)
+        {
+            var result = (int)MathF.Floor(1 / itemSize);
+            if(result < 1)
+                result = 1;
+            return result;
+        }
+
+        private int ReservationCapacity(int reservationVolume, ItemModel item)
+        {
+            if (item == null)
+                return reservationVolume;
+            else
+                return reservationVolume * ItemsPerCell(item.Size);
+        }
+
+        private bool ReservationIsOverStorageCapacity(ReservationModel reservation)
         {
             // Validate reservation size.
-            var overlappingReservations = _dbReservationService.FindWithinDateRange(reservation).Where(x => x.Id != reservation.Id);
+            var overlappingReservations = _dbReservationService.FindOverlappingDateRange(reservation.StartDate, reservation.EndDate).Where(x => x.Id != reservation.Id);
             var date = reservation.StartDate.Date;
             var storage = _dbStorageService.FindOne(reservation.StorageId);
 
-            while (DateTime.Compare(date, reservation.EndDate.Date) <= 0)
+            while (date <= reservation.EndDate.Date)
             {
-                int reservationSizeTotal = 0;
-                
-                var item = _dbItemService.FindOne(reservation.ItemId);
-                if (item != null)
-                {
-                    reservationSizeTotal += (int)MathF.Ceiling(item.Size * reservation.Size);
-                }
-                else
-                {
-                    reservationSizeTotal += reservation.Size;
-                }
+                int reservationTotalCapacity = 0;
+
+                reservationTotalCapacity = ReservationCapacity(reservation.Volume, _dbItemService.FindOne(reservation.ItemId));
 
                 foreach (var overlappingReservation in overlappingReservations
-                    .Where(x => DateTime.Compare(x.EndDate, date) >= 0))
+                    .Where(x => x.EndDate >= date && x.StartDate <= date))
                 {
-                    item = _dbItemService.FindOne(overlappingReservation.ItemId);
-                    if (item != null)
-                    {
-                        reservationSizeTotal += (int)MathF.Ceiling(item.Size * overlappingReservation.Size);
-                    }
-                    else
-                    {
-                        reservationSizeTotal += overlappingReservation.Size;
-                    }
+                    reservationTotalCapacity = ReservationCapacity(overlappingReservation.Volume, _dbItemService.FindOne(overlappingReservation.ItemId));
                 }
 
-                if (reservationSizeTotal > storage.Capacity)
+                if (reservationTotalCapacity > storage.Capacity)
                     return true;
 
                 date = date.AddDays(1);
@@ -104,10 +104,10 @@ namespace StorageDB.Controllers
                 if (_dbItemService.FindOne(reservation.ItemId) == null)
                     return BadRequest("There is no Item with such ItemId");
 
-            if (DateTime.Compare(reservation.StartDate, reservation.EndDate) > 0)
-                return BadRequest("Reservation cannot start before it ends");
+            if (reservation.StartDate >= reservation.EndDate)
+                return BadRequest("Reservation cannot start after it ends");
 
-            if (ReservationExceedsCapacity(reservation))
+            if (ReservationIsOverStorageCapacity(reservation))
                 return BadRequest("Combined reservation size exceeds storage capacity");
             
             var id = _dbReservationService.Insert(reservation);
@@ -132,7 +132,7 @@ namespace StorageDB.Controllers
             if (DateTime.Compare(reservation.StartDate, reservation.EndDate) > 0)
                 return BadRequest("Reservation cannot start after it ends");
 
-            if (ReservationExceedsCapacity(reservation))
+            if (ReservationIsOverStorageCapacity(reservation))
                 return BadRequest("Combined reservation size exceeds storage capacity");
             
             if (_dbReservationService.Update(reservation))
@@ -155,7 +155,7 @@ namespace StorageDB.Controllers
 
             reservation.StartDate = DateTime.Today.AddDays(rng.Next(5));
             reservation.EndDate = reservation.StartDate.AddDays(rng.Next(5));
-            reservation.Size = 10;
+            reservation.Volume = 10;
 
             var id = _dbReservationService.Insert(reservation);
 

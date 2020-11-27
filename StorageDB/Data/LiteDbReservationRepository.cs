@@ -21,10 +21,16 @@ namespace StorageDB.Data
             return _liteDb.GetCollection<ReservationModel>("Reservation").FindAll();
         }
 
-        public IEnumerable<ReservationModel> FindWithinDateRange(ReservationModel reservation)
+        public IEnumerable<ReservationModel> FindWithinDateRange(DateTime startDate, DateTime endDate)
         {
             return _liteDb.GetCollection<ReservationModel>("Reservation")
-                .Find(x => x.StartDate.Date <= reservation.EndDate.Date || x.EndDate.Date >= reservation.StartDate.Date);
+                .Find(x => x.StartDate.Date >= endDate.Date || x.EndDate.Date <= startDate.Date);
+        }
+
+        public IEnumerable<ReservationModel> FindOverlappingDateRange(DateTime startDate, DateTime endDate)
+        {
+            return _liteDb.GetCollection<ReservationModel>("Reservation")
+                .Find(x => x.StartDate.Date <= endDate.Date || x.EndDate.Date >= startDate.Date);
         }
 
         public ReservationModel FindOne(Guid id)

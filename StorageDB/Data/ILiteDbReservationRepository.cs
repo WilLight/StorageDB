@@ -7,6 +7,7 @@ namespace StorageDB.Data
 {
     public interface ILiteDbReservationRepository : ILiteDbIndexedRepository<ReservationModel>
     {
-        IEnumerable<ReservationModel> FindWithinDateRange(ReservationModel reservation);
+        IEnumerable<ReservationModel> FindWithinDateRange(DateTime startDate, DateTime endDate);
+        IEnumerable<ReservationModel> FindOverlappingDateRange(DateTime startDate, DateTime endDate);
     }
 }
