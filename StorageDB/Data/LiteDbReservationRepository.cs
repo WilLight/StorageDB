@@ -21,16 +21,29 @@ namespace StorageDB.Data
             return _liteDb.GetCollection<ReservationModel>("Reservation").FindAll();
         }
 
-        public IEnumerable<ReservationModel> FindWithinDateRange(DateTime startDate, DateTime endDate)
+        public IEnumerable<ReservationModel> FindAllInStorage(Guid storageId)
         {
-            return _liteDb.GetCollection<ReservationModel>("Reservation")
-                .Find(x => x.StartDate.Date >= endDate.Date || x.EndDate.Date <= startDate.Date);
+            return _liteDb.GetCollection<ReservationModel>("Reservation").Find(x => x.StorageId == storageId);
         }
 
-        public IEnumerable<ReservationModel> FindOverlappingDateRange(DateTime startDate, DateTime endDate)
+        public IEnumerable<ReservationModel> FindWithinDateRange(DateTime startDate, DateTime endDate, Guid storageId = default)
         {
-            return _liteDb.GetCollection<ReservationModel>("Reservation")
-                .Find(x => x.StartDate.Date <= endDate.Date || x.EndDate.Date >= startDate.Date);
+            if(storageId != default)
+                return _liteDb.GetCollection<ReservationModel>("Reservation")
+                    .Find(x => (x.StartDate.Date >= endDate.Date || x.EndDate.Date <= startDate.Date) && x.StorageId == storageId);
+            else
+                return _liteDb.GetCollection<ReservationModel>("Reservation")
+                    .Find(x => x.StartDate.Date >= endDate.Date || x.EndDate.Date <= startDate.Date);
+        }
+
+        public IEnumerable<ReservationModel> FindOverlappingDateRange(DateTime startDate, DateTime endDate, Guid storageId = default)
+        {
+            if(storageId != default)
+                return _liteDb.GetCollection<ReservationModel>("Reservation")
+                    .Find(x => (x.StartDate.Date <= endDate.Date || x.EndDate.Date >= startDate.Date) && x.StorageId == storageId);
+            else
+                return _liteDb.GetCollection<ReservationModel>("Reservation")
+                    .Find(x => x.StartDate.Date <= endDate.Date || x.EndDate.Date >= startDate.Date);
         }
 
         public ReservationModel FindOne(Guid id)

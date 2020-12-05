@@ -6,7 +6,7 @@ namespace StorageDB.Data
 {
     public interface ILiteDbIndexedRepository<TModel> where TModel: IModelIndexed
     {
-         IEnumerable<TModel> FindAll();
+        IEnumerable<TModel> FindAll();
         TModel FindOne(Guid id);
         Guid Insert(TModel model);
         bool Update(TModel model);

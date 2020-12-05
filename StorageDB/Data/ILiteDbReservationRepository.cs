@@ -5,9 +5,9 @@ using LiteDB;
 
 namespace StorageDB.Data
 {
-    public interface ILiteDbReservationRepository : ILiteDbIndexedRepository<ReservationModel>
+    public interface ILiteDbReservationRepository : ILiteDbIndexedRepository<ReservationModel>, ILiteDbStoredRepository<ReservationModel>
     {
-        IEnumerable<ReservationModel> FindWithinDateRange(DateTime startDate, DateTime endDate);
-        IEnumerable<ReservationModel> FindOverlappingDateRange(DateTime startDate, DateTime endDate);
+        IEnumerable<ReservationModel> FindWithinDateRange(DateTime startDate, DateTime endDate, Guid storageId = default);
+        IEnumerable<ReservationModel> FindOverlappingDateRange(DateTime startDate, DateTime endDate, Guid storageId = default);
     }
 }

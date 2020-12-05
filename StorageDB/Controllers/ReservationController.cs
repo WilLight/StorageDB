@@ -11,7 +11,7 @@ namespace StorageDB.Controllers
 {
     [ApiController]
     [Route("api/[controller]/[action]")]
-    public class ReservationController : ControllerBase
+    public class ReservationController : BaseController
     {
         private readonly ILogger<ReservationController> _logger;
         private readonly ILiteDbItemRepository _dbItemService;
@@ -24,49 +24,6 @@ namespace StorageDB.Controllers
             _dbReservationService = dbReservationService;
             _dbStorageService = dbStorageService;
             _logger = logger;
-        }
-
-        private int ItemsPerCell(float itemSize)
-        {
-            var result = (int)MathF.Floor(1 / itemSize);
-            if(result < 1)
-                result = 1;
-            return result;
-        }
-
-        private int ReservationCapacity(int reservationVolume, ItemModel item)
-        {
-            if (item == null)
-                return reservationVolume;
-            else
-                return reservationVolume * ItemsPerCell(item.Size);
-        }
-
-        private bool ReservationIsOverStorageCapacity(ReservationModel reservation)
-        {
-            // Validate reservation size.
-            var overlappingReservations = _dbReservationService.FindOverlappingDateRange(reservation.StartDate, reservation.EndDate).Where(x => x.Id != reservation.Id);
-            var date = reservation.StartDate.Date;
-            var storage = _dbStorageService.FindOne(reservation.StorageId);
-
-            while (date <= reservation.EndDate.Date)
-            {
-                int reservationTotalCapacity = 0;
-
-                reservationTotalCapacity = ReservationCapacity(reservation.Volume, _dbItemService.FindOne(reservation.ItemId));
-
-                foreach (var overlappingReservation in overlappingReservations
-                    .Where(x => x.EndDate >= date && x.StartDate <= date))
-                {
-                    reservationTotalCapacity = ReservationCapacity(overlappingReservation.Volume, _dbItemService.FindOne(overlappingReservation.ItemId));
-                }
-
-                if (reservationTotalCapacity > storage.Capacity)
-                    return true;
-
-                date = date.AddDays(1);
-            }
-            return false;
         }
 
         [HttpGet]
@@ -132,7 +89,7 @@ namespace StorageDB.Controllers
             if (DateTime.Compare(reservation.StartDate, reservation.EndDate) > 0)
                 return BadRequest("Reservation cannot start after it ends");
 
-            if (ReservationIsOverStorageCapacity(reservation))
+            if (ReservationIsOverStorageCapacity(reservation, true))
                 return BadRequest("Combined reservation size exceeds storage capacity");
             
             if (_dbReservationService.Update(reservation))

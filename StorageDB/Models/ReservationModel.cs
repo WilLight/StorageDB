@@ -2,7 +2,7 @@ using System;
 
 namespace StorageDB.Models
 {
-    public class ReservationModel : IModelIndexed
+    public class ReservationModel : IModelIndexed, IModelStored
     {
         public Guid Id { get; set; }
         public Guid StorageId { get; set; }
