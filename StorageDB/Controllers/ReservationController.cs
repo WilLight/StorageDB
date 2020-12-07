@@ -26,6 +26,24 @@ namespace StorageDB.Controllers
             _logger = logger;
         }
 
+        public bool ReservationIsOverStorageCapacity(ReservationModel reservation, bool update = false)
+        {
+            // Validate reservation size.
+            var storageCapacity = _dbStorageService.FindOne(reservation.StorageId).Capacity;
+            var reservationCapacitySum = new Dictionary<DateTime, int>();
+            if(update)
+                reservationCapacitySum = ReservationCapacitySumOverlappingDateRangeDictionary(reservation.StartDate, reservation.EndDate, reservation.StorageId, reservation.Id);
+            else
+                reservationCapacitySum = ReservationCapacitySumOverlappingDateRangeDictionary(reservation.StartDate, reservation.EndDate, reservation.StorageId);
+
+            foreach(var sum in reservationCapacitySum)
+            {
+                if (storageCapacity < sum.Value + ItemsCapacity(reservation.Volume, reservation.ItemId))
+                    return true;
+            }
+            return false;
+        }
+
         [HttpGet]
         public IEnumerable<ReservationModel> Get()
         {
@@ -106,20 +124,11 @@ namespace StorageDB.Controllers
 
             reservation.Id = Guid.NewGuid();
             reservation.StorageId = _dbStorageService.FindAll().First<StorageModel>().Id;
-
-            if (reservation.StorageId == default)
-                return BadRequest("StorageId does not point to existing storage");
-
             reservation.StartDate = DateTime.Today.AddDays(rng.Next(5));
             reservation.EndDate = reservation.StartDate.AddDays(rng.Next(5));
             reservation.Volume = 10;
 
-            var id = _dbReservationService.Insert(reservation);
-
-            if (id != default)
-                return CreatedAtAction("GetOne", _dbReservationService.FindOne(id));
-            else
-                return BadRequest();
+            return InsertOne(reservation);
         }
     }
 }

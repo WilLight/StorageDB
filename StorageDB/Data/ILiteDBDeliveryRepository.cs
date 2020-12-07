@@ -4,7 +4,7 @@ using StorageDB.Models;
 
 namespace StorageDB.Data
 {
-    public interface ILiteDbDeliveryRepository : ILiteDbIndexedRepository<DeliveryModel>
+    public interface ILiteDbDeliveryRepository : ILiteDbIndexedRepository<DeliveryModel>, ILiteDbStoredRepository<DeliveryModel>
     {
          
     }

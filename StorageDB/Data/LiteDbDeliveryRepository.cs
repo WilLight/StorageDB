@@ -21,6 +21,11 @@ namespace StorageDB.Data
             return _liteDb.GetCollection<DeliveryModel>("Delivery").FindAll();
         }
 
+        public IEnumerable<DeliveryModel> FindAllInStorage(Guid storageId)
+        {
+            return _liteDb.GetCollection<DeliveryModel>("Delivery").Find(x => x.StorageId == storageId);
+        }
+
         public DeliveryModel FindOne(Guid id)
         {
             return _liteDb.GetCollection<DeliveryModel>("Delivery")
