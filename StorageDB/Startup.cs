@@ -30,6 +30,7 @@ namespace StorageDB
             services.AddCors();
             services.Configure<LiteDbOptions>(Configuration.GetSection("LiteDbOptions"));
             services.AddSingleton<ILiteDbContext, LiteDbContext>();
+            services.AddTransient<ILiteDbClientRepository, LiteDbClientRepository>();
             services.AddTransient<ILiteDbDeliveryRepository, LiteDbDeliveryRepository>();
             services.AddTransient<ILiteDbItemRepository, LiteDbItemRepository>();
             services.AddTransient<ILiteDbReservationRepository, LiteDbReservationRepository>();

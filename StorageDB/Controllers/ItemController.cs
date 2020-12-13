@@ -61,7 +61,7 @@ namespace StorageDB.Controllers
         [HttpPost]
         public ActionResult<ItemModel> UpdateOne(ItemModel item)
         {
-            if (_dbItemService.Update(item))
+            if (_dbItemService.UpdateOne(item))
                 return Ok();
             else
                 return BadRequest();

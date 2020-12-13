@@ -136,7 +136,7 @@ namespace StorageDB.Controllers
         }
 
         [HttpGet]
-        public ActionResult<ReservationModel> GetOne(Guid id)
+        public ActionResult<ReservationModel> GetOne([FromBody] Guid id)
         {
             var result = _dbReservationService.FindOne(id);
 
@@ -195,7 +195,7 @@ namespace StorageDB.Controllers
             if (ReservationIsOverStorageCapacity(reservation, true))
                 return BadRequest("Combined reservation size exceeds storage capacity");
             
-            if (_dbReservationService.Update(reservation))
+            if (_dbReservationService.UpdateOne(reservation))
                 return Ok();
             else
                 return BadRequest();

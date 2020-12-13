@@ -9,6 +9,6 @@ namespace StorageDB.Data
         IEnumerable<TModel> FindAll();
         TModel FindOne(Guid id);
         Guid Insert(TModel model);
-        bool Update(TModel model);
+        bool UpdateOne(TModel model);
     }
 }

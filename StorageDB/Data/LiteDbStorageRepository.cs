@@ -29,7 +29,7 @@ namespace StorageDB.Data
         {
             return _liteDb.GetCollection<StorageModel>("Storage").Insert(item);
         }
-        public bool Update(StorageModel item)
+        public bool UpdateOne(StorageModel item)
         {
             return _liteDb.GetCollection<StorageModel>("Storage").Update(item);
         }

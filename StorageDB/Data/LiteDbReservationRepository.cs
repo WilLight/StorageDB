@@ -55,7 +55,7 @@ namespace StorageDB.Data
         {
             return _liteDb.GetCollection<ReservationModel>("Reservation").Insert(item);
         }
-        public bool Update(ReservationModel item)
+        public bool UpdateOne(ReservationModel item)
         {
             return _liteDb.GetCollection<ReservationModel>("Reservation").Update(item);
         }

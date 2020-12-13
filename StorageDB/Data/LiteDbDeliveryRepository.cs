@@ -16,6 +16,14 @@ namespace StorageDB.Data
             _liteDb = liteDbContext.Database;
         }
 
+        public bool DeleteOne(Guid id)
+        {
+            var dto = FindOne(id);
+            dto.Deleted = true;
+            UpdateOne(dto);
+            return true;
+        }
+
         public IEnumerable<DeliveryModel> FindAll()
         {
             return _liteDb.GetCollection<DeliveryModel>("Delivery").FindAll();
@@ -35,7 +43,7 @@ namespace StorageDB.Data
         {
             return _liteDb.GetCollection<DeliveryModel>("Delivery").Insert(item);
         }
-        public bool Update(DeliveryModel item)
+        public bool UpdateOne(DeliveryModel item)
         {
             return _liteDb.GetCollection<DeliveryModel>("Delivery").Update(item);
         }

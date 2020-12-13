@@ -107,7 +107,7 @@ namespace StorageDB.Controllers
         }
 
         [HttpGet]
-        public ActionResult<DeliveryModel> GetOne(Guid id)
+        public ActionResult<DeliveryModel> GetOne([FromBody] Guid id)
         {
             var result = _dbDeliveryService.FindOne(id);
 
@@ -154,7 +154,7 @@ namespace StorageDB.Controllers
                 if (_dbItemService.FindOne(delivery.ItemId) == null)
                     return BadRequest("There is no Item with such ItemId");
             
-            if (_dbDeliveryService.Update(delivery))
+            if (_dbDeliveryService.UpdateOne(delivery))
                 return Ok();
             else
                 return BadRequest();
