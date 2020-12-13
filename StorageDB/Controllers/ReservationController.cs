@@ -11,12 +11,31 @@ namespace StorageDB.Controllers
 {
     [ApiController]
     [Route("api/[controller]/[action]")]
-    public class ReservationController : BaseController
+    public class ReservationController : ControllerBase
     {
         private readonly ILogger<ReservationController> _logger;
         private readonly ILiteDbItemRepository _dbItemService;
         private readonly ILiteDbReservationRepository _dbReservationService;
         private readonly ILiteDbStorageRepository _dbStorageService;
+
+        public int ItemsPerCell(float itemSize)
+        {
+            var result = (int)MathF.Floor(1 / itemSize);
+            if (result < 1)
+                result = 1;
+            return result;
+        }
+
+        public int ItemsCapacity(int itemsCount, Guid itemId)
+        {
+            ItemModel item = null;
+            if (itemId != default)
+                item = _dbItemService.FindOne(itemId);
+            if (item == null)
+                return itemsCount;
+            else
+                return itemsCount * ItemsPerCell(item.Size);
+        }
 
         public ReservationController(ILogger<ReservationController> logger, ILiteDbItemRepository dbItemService, ILiteDbReservationRepository dbReservationService, ILiteDbStorageRepository dbStorageService)
         {
@@ -24,6 +43,72 @@ namespace StorageDB.Controllers
             _dbReservationService = dbReservationService;
             _dbStorageService = dbStorageService;
             _logger = logger;
+        }
+
+        public Dictionary<DateTime, int> ReservationCapacitySumDictionary(Guid storageId)
+        {
+            var reservationCapacitySumDictionary = new Dictionary<DateTime, int>();
+            var reservations = _dbReservationService.FindAllInStorage(storageId).OrderBy(x => x.StartDate);
+            var dateAnchor = reservations.First().StartDate;
+            DateTime endDate = dateAnchor;
+
+            foreach (var reservation in reservations)
+            {
+                if (endDate < reservation.EndDate)
+                    endDate = reservation.EndDate;
+            }
+
+            while (dateAnchor <= endDate)
+            {
+                int reservationCapacitySum = 0;
+
+                foreach (var reservation in reservations
+                    .Where(x => x.EndDate >= dateAnchor && x.StartDate <= dateAnchor))
+                {
+                    reservationCapacitySum += ItemsCapacity(reservation.Volume, reservation.ItemId);
+                }
+
+                reservationCapacitySumDictionary.Add(dateAnchor, reservationCapacitySum);
+
+                if (dateAnchor.AddDays(1) > endDate)
+                    dateAnchor = endDate;
+                else
+                    dateAnchor = dateAnchor.AddDays(1);
+            }
+
+            return reservationCapacitySumDictionary;
+        }
+
+        public Dictionary<DateTime, int> ReservationCapacitySumOverlappingDateRangeDictionary(DateTime startDate, DateTime endDate, Guid storageId, Guid reservationId = default)
+        {
+            var reservationCapacitySumWithinDateRangeDictionary = new Dictionary<DateTime, int>();
+            var overlappingReservations = _dbReservationService.FindOverlappingDateRange(startDate, endDate, storageId).Where(x => x.Id != reservationId);
+            var dateAnchor = startDate;
+            if (overlappingReservations != null)
+            {
+                while (dateAnchor <= endDate)
+                {
+                    int reservationCapacitySum = 0;
+
+                    foreach (var reservation in overlappingReservations
+                        .Where(x => x.EndDate >= dateAnchor && x.StartDate <= dateAnchor))
+                    {
+                        reservationCapacitySum += ItemsCapacity(reservation.Volume, reservation.ItemId);
+                    }
+
+                    reservationCapacitySumWithinDateRangeDictionary.Add(dateAnchor, reservationCapacitySum);
+
+                    if (dateAnchor == endDate)
+                        dateAnchor = dateAnchor.AddDays(1);
+                    else if (dateAnchor.AddDays(1) > endDate)
+                        dateAnchor = endDate;
+                    else
+                        dateAnchor = dateAnchor.AddDays(1);
+                }
+            }
+            
+
+            return reservationCapacitySumWithinDateRangeDictionary;
         }
 
         public bool ReservationIsOverStorageCapacity(ReservationModel reservation, bool update = false)
