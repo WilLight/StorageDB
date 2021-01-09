@@ -4,8 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using StorageDB.Data;
 using StorageDB.Models;
+using StorageDB.Services;
 
 namespace StorageDB.Controllers
 {
@@ -13,30 +13,27 @@ namespace StorageDB.Controllers
     [Route("api/[controller]/[action]")]
     public class StorageController : ControllerBase
     {
-        private static readonly string[] Names = new[]
-        {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        };
-
         private readonly ILogger<StorageController> _logger;
-        private readonly ILiteDbStorageRepository _dbStorageService;
+        private readonly IStorageService _storageService;
+        private readonly IValidationService _validationService;
 
-        public StorageController(ILogger<StorageController> logger, ILiteDbStorageRepository dbStorageService)
+        public StorageController(ILogger<StorageController> logger, IStorageService storageService, IValidationService validationService)
         {
-            _dbStorageService = dbStorageService;
+            _storageService = storageService;
+            _validationService = validationService;
             _logger = logger;
         }
 
         [HttpGet]
         public IEnumerable<StorageModel> Get()
         {
-            return _dbStorageService.FindAll().OrderBy(item => item.Name);
+            return _storageService.GetAll().OrderBy(item => item.Name);
         }
 
         [HttpGet]
-        public ActionResult<StorageModel> GetOne(Guid id)
+        public ActionResult<StorageModel> GetOne([FromBody] Guid id)
         {
-            var result = _dbStorageService.FindOne(id);
+            var result = _storageService.GetOne(id);
             if (result != default)
                 return Ok(result);
             else
@@ -46,14 +43,12 @@ namespace StorageDB.Controllers
         [HttpPost]
         public ActionResult<StorageModel> InsertOne(StorageModel storage)
         {
-            var dto = _dbStorageService.FindOne(storage.Id);
-            if (dto == null)
-                storage.Id = Guid.NewGuid();
-            else
-                return BadRequest(dto);
-            var id = _dbStorageService.Insert(storage);
-            if (id != default)
-                return CreatedAtAction("GetOne", _dbStorageService.FindOne(id));
+            if (_validationService.ValidateStorage(storage.Id))
+                return BadRequest();
+            
+            var dto = _storageService.InsertOne(storage);
+            if (dto != null)
+                return CreatedAtAction("GetOne", dto);
             else
                 return BadRequest();
         }
@@ -61,23 +56,8 @@ namespace StorageDB.Controllers
         [HttpPost]
         public ActionResult<StorageModel> UpdateOne(StorageModel storage)
         {
-            if(_dbStorageService.UpdateOne(storage))
+            if(_storageService.UpdateOne(storage) != null)
                 return Ok();
-            else
-                return BadRequest();
-        }
-
-        [HttpPost]
-        public ActionResult<StorageModel> GenerateOne()
-        {
-            var rng = new Random();
-            var item = new StorageModel();
-            item.Id = Guid.NewGuid();
-            item.Name = Names[rng.Next(Names.Length)];
-            item.Capacity = rng.Next(170) * 5;
-            var id = _dbStorageService.Insert(item);
-            if (id != default)
-                return CreatedAtAction("GetOne", _dbStorageService.FindOne(id));
             else
                 return BadRequest();
         }

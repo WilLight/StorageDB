@@ -12,6 +12,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using LiteDB;
 using StorageDB.Data;
+using StorageDB.Services;
 
 namespace StorageDB
 {
@@ -30,11 +31,16 @@ namespace StorageDB
             services.AddCors();
             services.Configure<LiteDbOptions>(Configuration.GetSection("LiteDbOptions"));
             services.AddSingleton<ILiteDbContext, LiteDbContext>();
-            services.AddTransient<ILiteDbClientRepository, LiteDbClientRepository>();
+            services.AddTransient<ILiteDbCustomerRepository, LiteDbCustomerRepository>();
             services.AddTransient<ILiteDbDeliveryRepository, LiteDbDeliveryRepository>();
             services.AddTransient<ILiteDbItemRepository, LiteDbItemRepository>();
             services.AddTransient<ILiteDbReservationRepository, LiteDbReservationRepository>();
             services.AddTransient<ILiteDbStorageRepository, LiteDbStorageRepository>();
+            services.AddTransient<ICustomerService, CustomerService>();
+            services.AddTransient<IItemService, ItemService>();
+            services.AddTransient<IOrderService, OrderService>();
+            services.AddTransient<IStorageService, StorageService>();
+            services.AddTransient<IValidationService, ValidationService>();
             services.AddControllers();
         }
 

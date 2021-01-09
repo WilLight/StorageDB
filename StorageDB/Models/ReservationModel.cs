@@ -8,6 +8,7 @@ namespace StorageDB.Models
         public bool Deleted { get; set; }
         public Guid StorageId { get; set; }
         public Guid ItemId { get; set; }
+        public Guid ClientId { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public int Volume { get; set; }

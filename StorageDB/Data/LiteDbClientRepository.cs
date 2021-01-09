@@ -7,32 +7,32 @@ using StorageDB.Models;
 
 namespace StorageDB.Data
 {
-    public class LiteDbClientRepository : ILiteDbClientRepository
+    public class LiteDbCustomerRepository : ILiteDbCustomerRepository
     {
         private LiteDatabase _liteDb;
 
-        public LiteDbClientRepository(ILiteDbContext liteDbContext)
+        public LiteDbCustomerRepository(ILiteDbContext liteDbContext)
         {
             _liteDb = liteDbContext.Database;
         }
 
-        public IEnumerable<ClientModel> FindAll()
+        public IEnumerable<CustomerModel> FindAll()
         {
-            return _liteDb.GetCollection<ClientModel>("Client").FindAll();
+            return _liteDb.GetCollection<CustomerModel>("Client").FindAll();
         }
 
-        public ClientModel FindOne(Guid id)
+        public CustomerModel FindOne(Guid id)
         {
-            return _liteDb.GetCollection<ClientModel>("Client")
+            return _liteDb.GetCollection<CustomerModel>("Client")
                 .FindOne(Client => Client.Id.Equals(id));
         }
-        public Guid Insert(ClientModel item)
+        public Guid Insert(CustomerModel item)
         {
-            return _liteDb.GetCollection<ClientModel>("Client").Insert(item);
+            return _liteDb.GetCollection<CustomerModel>("Client").Insert(item);
         }
-        public bool UpdateOne(ClientModel item)
+        public bool UpdateOne(CustomerModel item)
         {
-            return _liteDb.GetCollection<ClientModel>("Client").Update(item);
+            return _liteDb.GetCollection<CustomerModel>("Client").Update(item);
         }
     }
 }
