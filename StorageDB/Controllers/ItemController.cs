@@ -33,8 +33,10 @@ namespace StorageDB.Controllers
         [HttpGet]
         public ActionResult<ItemModel> GetOne(Guid id)
         {
-            if (!_validationService.ValidateItem(id))
-                return Ok(_itemService.GetOne(id));
+            var result = _itemService.GetOne(id);
+
+            if (result != default)
+                return Ok(result);
             else
                 return NotFound();
         }

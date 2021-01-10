@@ -31,7 +31,7 @@ namespace StorageDB.Controllers
         }
 
         [HttpGet]
-        public ActionResult<DeliveryModel> GetOne([FromBody] Guid id)
+        public ActionResult<DeliveryModel> GetOne(Guid id)
         {
             var result = _orderService.GetOneDelivery(id);
 

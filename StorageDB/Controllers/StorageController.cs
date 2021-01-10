@@ -31,7 +31,7 @@ namespace StorageDB.Controllers
         }
 
         [HttpGet]
-        public ActionResult<StorageModel> GetOne([FromBody] Guid id)
+        public ActionResult<StorageModel> GetOne(Guid id)
         {
             var result = _storageService.GetOne(id);
             if (result != default)
