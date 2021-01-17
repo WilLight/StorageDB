@@ -58,5 +58,43 @@ namespace StorageDB.Services
             else
                 return false;
         }
+
+        public bool ValidateDeliveryVolume(DeliveryModel delivery)
+        {
+            var itemsPerCell = _itemService.CountItemsPerCell(delivery.ItemId);
+            var deliveryVolume = (int)(delivery.Volume/itemsPerCell);
+            var deliveries = _orderService.GetAllDeliveries();
+            var overlappingReservations = _orderService.GetReservationsOverlappingDateRange(delivery.DeliveryDate, delivery.DeliveryDate.AddYears(5), delivery.StorageId);
+            List<OrderValidationModel> orderValidationModels = new List<OrderValidationModel>();
+            
+            foreach (var d in deliveries)
+            {
+                OrderValidationModel order = new OrderValidationModel();
+                order.StartDate = d.DeliveryDate;
+                order.EndDate = d.DeliveryDate.AddYears(5);
+                order.Volume = (int)(d.Volume/_itemService.CountItemsPerCell(d.ItemId));
+                orderValidationModels.Add(order);
+            }
+
+            foreach (var reservation in overlappingReservations)
+            {
+                OrderValidationModel order = new OrderValidationModel();
+                order.StartDate = reservation.StartDate;
+                order.EndDate = reservation.EndDate;
+
+                if(reservation.ItemId != default)
+                    order.Volume = (int)(reservation.Volume/_itemService.CountItemsPerCell(reservation.ItemId));
+                else
+                    order.Volume = reservation.Volume;
+
+                orderValidationModels.Add(order);
+            }
+
+            orderValidationModels.Sort((x, y) => x.StartDate.CompareTo(y.StartDate));
+
+            //TODO: write size comparison
+
+            return false;
+        }
     }
 }

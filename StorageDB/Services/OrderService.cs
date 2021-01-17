@@ -54,6 +54,11 @@ namespace StorageDB.Services
             return _dbReservationRepository.FindAll().OrderBy(item => item.Id);
         }
 
+        public IEnumerable<ReservationModel> GetReservationsOverlappingDateRange(DateTime startDate, DateTime endDate, Guid storageId)
+        {
+            return _dbReservationRepository.FindOverlappingDateRange(startDate, endDate, storageId);
+        }
+
         public ReservationModel GetOneReservation(Guid id)
         {
             return _dbReservationRepository.FindOne(id);

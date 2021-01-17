@@ -14,6 +14,7 @@ namespace StorageDB.Services
         DeliveryModel InsertOneDelivery(DeliveryModel delivery);
         DeliveryModel UpdateOneDelivery(DeliveryModel delivery);
         IEnumerable<ReservationModel> GetAllReservations();
+        IEnumerable<ReservationModel> GetReservationsOverlappingDateRange(DateTime startDate, DateTime endDate, Guid storageId);
         ReservationModel GetOneReservation(Guid id);
         ReservationModel InsertOneReservation(ReservationModel reservation);
         ReservationModel UpdateOneReservation(ReservationModel reservation);

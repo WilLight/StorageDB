@@ -18,9 +18,7 @@ namespace StorageDB.Data
 
         public bool DeleteOne(Guid id)
         {
-            var dto = FindOne(id);
-            dto.Deleted = true;
-            UpdateOne(dto);
+            _liteDb.GetCollection<DeliveryModel>("Delivery").Delete(id);
             return true;
         }
 
