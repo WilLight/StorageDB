@@ -12,9 +12,9 @@ namespace StorageDB.Services
 {
     public class CustomerService : ICustomerService
     {
-        private readonly ILiteDbCustomerRepository _dbCustomerRepository;
+        private readonly LiteDbCustomerRepository _dbCustomerRepository;
 
-        public CustomerService(ILiteDbCustomerRepository dbCustomerRepository)
+        public CustomerService(LiteDbCustomerRepository dbCustomerRepository)
         {
             _dbCustomerRepository = dbCustomerRepository;
         }

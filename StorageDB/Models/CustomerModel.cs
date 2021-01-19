@@ -2,9 +2,8 @@ using System;
 
 namespace StorageDB.Models
 {
-    public class CustomerModel : IModelIndexed
+    public class CustomerModel : BaseModel
     {
-        public Guid Id { get; set; }
         public string Name { get; set; }
     }
 }

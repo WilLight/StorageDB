@@ -7,11 +7,11 @@ using StorageDB.Models;
 
 namespace StorageDB.Data
 {
-    public class LiteDbItemRepository : LiteDbBaseRepository<ItemModel>
+    public class LiteDbCustomerRepository : LiteDbBaseRepository<CustomerModel>
     {
         private LiteDatabase _liteDb;
 
-        public LiteDbItemRepository(ILiteDbContext liteDbContext) : base(liteDbContext)
+        public LiteDbCustomerRepository(ILiteDbContext liteDbContext) : base(liteDbContext)
         {
             _liteDb = liteDbContext.Database;
         }

@@ -12,9 +12,9 @@ namespace StorageDB.Services
 {
     public class ItemService : IItemService
     {
-        private readonly ILiteDbItemRepository _dbItemRepository;
+        private readonly LiteDbItemRepository _dbItemRepository;
 
-        public ItemService(ILiteDbItemRepository dbItemRepository)
+        public ItemService(LiteDbItemRepository dbItemRepository)
         {
             _dbItemRepository = dbItemRepository;
         }

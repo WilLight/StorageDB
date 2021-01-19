@@ -13,10 +13,10 @@ namespace StorageDB.Services
 {
     public class OrderService : IOrderService
     {
-        private readonly ILiteDbDeliveryRepository _dbDeliveryRepository;
-        private readonly ILiteDbReservationRepository _dbReservationRepository;
+        private readonly LiteDbDeliveryRepository _dbDeliveryRepository;
+        private readonly LiteDbReservationRepository _dbReservationRepository;
 
-        public OrderService(IItemService itemService, ILiteDbDeliveryRepository dbDeliveryRepository, ILiteDbReservationRepository dbReservationRepository, ILiteDbStorageRepository dbStorageRepository)
+        public OrderService(IItemService itemService, LiteDbDeliveryRepository dbDeliveryRepository, LiteDbReservationRepository dbReservationRepository)
         {
             _dbDeliveryRepository = dbDeliveryRepository;
             _dbReservationRepository = dbReservationRepository;

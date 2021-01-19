@@ -31,11 +31,11 @@ namespace StorageDB
             services.AddCors();
             services.Configure<LiteDbOptions>(Configuration.GetSection("LiteDbOptions"));
             services.AddSingleton<ILiteDbContext, LiteDbContext>();
-            services.AddTransient<ILiteDbCustomerRepository, LiteDbCustomerRepository>();
-            services.AddTransient<ILiteDbDeliveryRepository, LiteDbDeliveryRepository>();
-            services.AddTransient<ILiteDbItemRepository, LiteDbItemRepository>();
-            services.AddTransient<ILiteDbReservationRepository, LiteDbReservationRepository>();
-            services.AddTransient<ILiteDbStorageRepository, LiteDbStorageRepository>();
+            services.AddTransient<LiteDbCustomerRepository>();
+            services.AddTransient<LiteDbDeliveryRepository>();
+            services.AddTransient<LiteDbItemRepository>();
+            services.AddTransient<LiteDbReservationRepository>();
+            services.AddTransient<LiteDbStorageRepository>();
             services.AddTransient<ICustomerService, CustomerService>();
             services.AddTransient<IItemService, ItemService>();
             services.AddTransient<IOrderService, OrderService>();

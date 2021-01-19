@@ -12,9 +12,9 @@ namespace StorageDB.Services
 {
     public class StorageService : IStorageService
     {
-        private readonly ILiteDbStorageRepository _dbStorageRepository;
+        private readonly LiteDbStorageRepository _dbStorageRepository;
 
-        public StorageService(ILiteDbStorageRepository dbStorageRepository)
+        public StorageService(LiteDbStorageRepository dbStorageRepository)
         {
             _dbStorageRepository = dbStorageRepository;
         }
