@@ -59,6 +59,60 @@ namespace StorageDB.Services
                 return false;
         }
 
+        public int CheckStorageOverflowRecursion(List<OrderValidationModel> orders, int storageSize)
+        {
+            var ordersCopy = orders;
+            int ordersVolume = 0;
+
+            foreach (var order in ordersCopy)
+            { 
+                var overlappingOrders = orders.Where(x => x.StartDate <= order.EndDate && x.EndDate >= order.StartDate).ToList();
+
+                ordersCopy.Except(overlappingOrders);
+
+                overlappingOrders.Remove(order);
+
+                if (overlappingOrders.Count() > 0)
+                {
+                    var tempVolume = order.Volume + CheckStorageOverflowRecursion(overlappingOrders, storageSize);
+
+                    if (ordersVolume < tempVolume)
+                    {
+                        ordersVolume = tempVolume;
+                    }
+                }
+                else
+                {
+                    if (ordersVolume < order.Volume)
+                    {
+                        ordersVolume = order.Volume;
+                    }
+                }
+            }
+            return ordersVolume;
+        }
+
+        public bool CheckStorageOverflow(List<OrderValidationModel> orders, int storageSize)
+        {
+            var ordersCopy = orders;
+
+            foreach (var order in ordersCopy)
+            { 
+                var overlappingOrders = orders.Where(x => x.StartDate <= order.EndDate && x.EndDate >= order.StartDate).ToList();
+
+                ordersCopy.Except(overlappingOrders);
+
+                overlappingOrders.Remove(order);
+
+                if (order.Volume + CheckStorageOverflowRecursion(overlappingOrders, storageSize) > storageSize)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         public bool ValidateDeliveryVolume(DeliveryModel delivery)
         {
             var itemsPerCell = _itemService.CountItemsPerCell(delivery.ItemId);
@@ -92,7 +146,7 @@ namespace StorageDB.Services
 
             orderValidationModels.Sort((x, y) => x.StartDate.CompareTo(y.StartDate));
 
-            //TODO: write size comparison
+            CheckStorageOverflow(orderValidationModels, _storageService.GetOne(delivery.StorageId).Capacity);
 
             return false;
         }

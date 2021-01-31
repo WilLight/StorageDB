@@ -23,13 +23,15 @@ namespace StorageDB.Controllers
             _validationService = validationService;
             _logger = logger;
         }
-
+ 
+        [Route("api/[controller]/get")]
         [HttpGet]
         public IEnumerable<CustomerModel> Get()
         {
             return _customerService.GetAll();
         }
 
+        [Route("api/[controller]/get/{id}")]
         [HttpGet]
         public ActionResult<CustomerModel> GetOne(Guid id)
         {
