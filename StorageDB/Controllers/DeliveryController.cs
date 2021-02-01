@@ -24,16 +24,15 @@ namespace StorageDB.Controllers
             _logger = logger;
         }
 
-        [Route("api/[controller]/get")]
         [HttpGet]
         public IEnumerable<DeliveryModel> Get()
         {
             return _orderService.GetAllDeliveries();
         }
 
-        [Route("api/[controller]/get/{id}")]
+        [Route("{id:Guid}")]
         [HttpGet]
-        public ActionResult<DeliveryModel> GetOne(Guid id)
+        public ActionResult<DeliveryModel> Get(Guid id)
         {
             var result = _orderService.GetOneDelivery(id);
 

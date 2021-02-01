@@ -30,8 +30,9 @@ namespace StorageDB.Controllers
             return _itemService.GetAll();
         }
 
+        [Route("{id:Guid}")]
         [HttpGet]
-        public ActionResult<ItemModel> GetOne(Guid id)
+        public ActionResult<ItemModel> Get(Guid id)
         {
             var result = _itemService.GetOne(id);
 
