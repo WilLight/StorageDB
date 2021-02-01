@@ -46,7 +46,7 @@ namespace StorageDB.Controllers
             if (!_validationService.ValidateItem(item.Id))
                 item.Id = Guid.NewGuid();
             else
-                return BadRequest();
+                return BadRequest(new {message = "Insert requires Id field to be null"});
             var dto = _itemService.InsertOne(item);
             if (dto != default)
                 return CreatedAtAction("GetOne", dto);

@@ -45,13 +45,13 @@ namespace StorageDB.Controllers
         {
             // Validate reference ids.
             if (!_validationService.ValidateStorage(delivery.StorageId))
-                return BadRequest("StorageId does not point to existing storage");
+                return BadRequest(new {message = "StorageId does not point to existing storage"});
 
             if (delivery.ItemId != default && !_validationService.ValidateItem(delivery.ItemId))
-                return BadRequest("There is no Item with such ItemId");
+                return BadRequest(new {message = "There is no Item with such ItemId"});
 
             if (!_validationService.ValidateDeliveryVolume(delivery))
-                    return BadRequest("Delivery is over storage capacity");
+                    return BadRequest(new {message = "Delivery is over storage capacity"});
 
             var dto = _orderService.InsertOneDelivery(delivery);
 
@@ -67,7 +67,7 @@ namespace StorageDB.Controllers
             if (_validationService.ValidateDeliveryUpdate(delivery))
             {
                 if (!_validationService.ValidateDeliveryVolume(delivery))
-                    return BadRequest("Delivery is over storage capacity");
+                    return BadRequest(new {message = "Delivery is over storage capacity"});
 
                 var dto = _orderService.UpdateOneDelivery(delivery);
                 return Ok(delivery);
