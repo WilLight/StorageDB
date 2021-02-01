@@ -47,7 +47,7 @@ namespace StorageDB.Controllers
 
             // Validate reference ids.
             if (!_validationService.ValidateStorage(reservation.StorageId))
-                return BadRequest("StorageId does not point to existing storage");
+                return BadRequest(new {message = "StorageId does not point to existing storage"});
 
             if (reservation.ItemId != default)
             {
