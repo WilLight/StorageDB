@@ -14,5 +14,7 @@ namespace StorageDB.Services
         bool ValidateStorage(Guid storageId);
         bool ValidateDeliveryUpdate(DeliveryModel delivery);
         bool ValidateReservationUpdate(ReservationModel reservation);
+        bool ValidateDeliveryVolume(DeliveryModel delivery);
+        bool ValidateReservationVolume(ReservationModel reservation);
     }
 }

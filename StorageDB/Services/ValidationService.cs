@@ -115,11 +115,19 @@ namespace StorageDB.Services
 
         public bool ValidateDeliveryVolume(DeliveryModel delivery)
         {
-            var itemsPerCell = _itemService.CountItemsPerCell(delivery.ItemId);
-            var deliveryVolume = (int)(delivery.Volume/itemsPerCell);
-            var deliveries = _orderService.GetAllDeliveries();
+            var deliveries = _orderService.GetAllDeliveries().ToList();
             var overlappingReservations = _orderService.GetReservationsOverlappingDateRange(delivery.DeliveryDate, delivery.DeliveryDate.AddYears(5), delivery.StorageId);
             List<OrderValidationModel> orderValidationModels = new List<OrderValidationModel>();
+            
+            if (deliveries.FirstOrDefault(x => x.Id == delivery.Id) == default)
+            {
+                deliveries.Add(delivery);
+            }
+            else
+            {
+                deliveries.Remove(deliveries.First(x => x.Id == delivery.Id));
+                deliveries.Add(delivery);
+            }
             
             foreach (var d in deliveries)
             {
@@ -149,6 +157,51 @@ namespace StorageDB.Services
             CheckStorageOverflow(orderValidationModels, _storageService.GetOne(delivery.StorageId).Capacity);
 
             return false;
+        }
+
+        public bool ValidateReservationVolume(ReservationModel reservation)
+        {
+            var deliveries = _orderService.GetAllDeliveries();
+            var overlappingReservations = _orderService.GetReservationsOverlappingDateRange(reservation.StartDate, reservation.EndDate, reservation.StorageId).ToList();
+
+            if (overlappingReservations.FirstOrDefault(x => x.Id == reservation.Id) == default)
+            {
+                overlappingReservations.Add(reservation);
+            }
+            else
+            {
+                overlappingReservations.Remove(overlappingReservations.First(x => x.Id == reservation.Id));
+                overlappingReservations.Add(reservation);
+            }
+
+            List<OrderValidationModel> orderValidationModels = new List<OrderValidationModel>();
+            
+            foreach (var d in deliveries)
+            {
+                OrderValidationModel order = new OrderValidationModel();
+                order.StartDate = d.DeliveryDate;
+                order.EndDate = d.DeliveryDate.AddYears(5);
+                order.Volume = (int)(d.Volume/_itemService.CountItemsPerCell(d.ItemId));
+                orderValidationModels.Add(order);
+            }
+
+            foreach (var r in overlappingReservations)
+            {
+                OrderValidationModel order = new OrderValidationModel();
+                order.StartDate = r.StartDate;
+                order.EndDate = r.EndDate;
+
+                if(r.ItemId != default)
+                    order.Volume = (int)(r.Volume/_itemService.CountItemsPerCell(r.ItemId));
+                else
+                    order.Volume = r.Volume;
+
+                orderValidationModels.Add(order);
+            }
+
+            orderValidationModels.Sort((x, y) => x.StartDate.CompareTo(y.StartDate));
+
+            return !CheckStorageOverflow(orderValidationModels, _storageService.GetOne(reservation.StorageId).Capacity);
         }
     }
 }

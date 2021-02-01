@@ -24,14 +24,12 @@ namespace StorageDB.Controllers
             _logger = logger;
         }
 
-        [Route("api/[controller]/get")]
         [HttpGet]
         public IEnumerable<ReservationModel> Get()
         {
             return _orderService.GetAllReservations();
         }
 
-        [Route("api/[controller]/get/{id}")]
         [HttpGet]
         public ActionResult<ReservationModel> GetOne(Guid id)
         {
@@ -52,11 +50,17 @@ namespace StorageDB.Controllers
             if (!_validationService.ValidateStorage(reservation.StorageId))
                 return BadRequest("StorageId does not point to existing storage");
 
-            if (!_validationService.ValidateItem(reservation.ItemId))
-                return BadRequest("There is no Item with such ItemId");
+            if (reservation.ItemId != default)
+            {
+                if (!_validationService.ValidateItem(reservation.ItemId))
+                    return BadRequest("There is no Item with such ItemId");
+            }
 
             if (reservation.StartDate >= reservation.EndDate)
                 return BadRequest("Reservation cannot start after it ends");
+
+            if (!_validationService.ValidateReservationVolume(reservation))
+                return BadRequest("Reservation is over storage capacity");
             
             var dto = _orderService.InsertOneReservation(reservation);
 
@@ -72,6 +76,9 @@ namespace StorageDB.Controllers
             // Validate reference ids.
             if (_validationService.ValidateReservationUpdate(reservation))
             {
+                if (!_validationService.ValidateReservationVolume(reservation))
+                    return BadRequest("Reservation is over storage capacity");
+
                 var dto = _orderService.UpdateOneReservation(reservation);
                 return Ok(reservation);
             }

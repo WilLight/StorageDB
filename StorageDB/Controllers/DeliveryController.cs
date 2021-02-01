@@ -53,6 +53,9 @@ namespace StorageDB.Controllers
             if (delivery.ItemId != default && !_validationService.ValidateItem(delivery.ItemId))
                 return BadRequest("There is no Item with such ItemId");
 
+            if (!_validationService.ValidateDeliveryVolume(delivery))
+                    return BadRequest("Delivery is over storage capacity");
+
             var dto = _orderService.InsertOneDelivery(delivery);
 
             if(dto != null)
@@ -66,6 +69,9 @@ namespace StorageDB.Controllers
         {
             if (_validationService.ValidateDeliveryUpdate(delivery))
             {
+                if (!_validationService.ValidateDeliveryVolume(delivery))
+                    return BadRequest("Delivery is over storage capacity");
+
                 var dto = _orderService.UpdateOneDelivery(delivery);
                 return Ok(delivery);
             }
