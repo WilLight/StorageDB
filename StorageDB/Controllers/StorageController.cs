@@ -30,9 +30,7 @@ namespace StorageDB.Controllers
             return _storageService.GetAll().OrderBy(item => item.Name);
         }
 
-        [Route("{id:Guid}")]
-        [HttpGet]
-        public ActionResult<StorageModel> Get(Guid id)
+        public ActionResult<StorageModel> GetOne(Guid id)
         {
             var result = _storageService.GetOne(id);
             if (result != default)

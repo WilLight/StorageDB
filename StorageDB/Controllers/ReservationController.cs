@@ -30,9 +30,7 @@ namespace StorageDB.Controllers
             return _orderService.GetAllReservations();
         }
 
-        [Route("{id:Guid}")]
-        [HttpGet]
-        public ActionResult<ReservationModel> Get(Guid id)
+        public ActionResult<ReservationModel> GetOne(Guid id)
         {
             var result = _orderService.GetOneReservation(id);
 

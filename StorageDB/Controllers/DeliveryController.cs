@@ -30,9 +30,7 @@ namespace StorageDB.Controllers
             return _orderService.GetAllDeliveries();
         }
 
-        [Route("{id:Guid}")]
-        [HttpGet]
-        public ActionResult<DeliveryModel> Get(Guid id)
+        public ActionResult<DeliveryModel> GetOne(Guid id)
         {
             var result = _orderService.GetOneDelivery(id);
 
