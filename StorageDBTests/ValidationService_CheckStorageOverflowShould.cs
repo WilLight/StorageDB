@@ -68,23 +68,6 @@ namespace StorageDBTests
         }
 
         [Fact]
-        public void CheckStorageOverflow_ThreeOrders_OverflowFalse()
-        {
-            ValidationService validationService = InitializeValidationService();
-            
-            List<OrderValidationModel> orders = new List<OrderValidationModel>();
-            orders.Add(new OrderValidationModel(DateTime.Now, DateTime.Now.AddDays(5), 5));
-            orders.Add(new OrderValidationModel(DateTime.Now.AddDays(1), DateTime.Now.AddDays(3), 3));
-            orders.Add(new OrderValidationModel(DateTime.Now.AddDays(2), DateTime.Now.AddDays(4), 2));
-
-            int storageVolume = 10;
-
-            var result = validationService.CheckStorageOverflow(orders, storageVolume);
-
-            Assert.False(result);
-        }
-
-        [Fact]
         public void CheckStorageOverflow_ThreeOrders_OneRecursion_OverflowFalse()
         {
             ValidationService validationService = InitializeValidationService();

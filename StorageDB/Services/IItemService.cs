@@ -13,6 +13,5 @@ namespace StorageDB.Services
          ItemModel GetOne(Guid itemId);
          ItemModel InsertOne(ItemModel item);
          ItemModel UpdateOne(ItemModel item);
-         float CountItemsPerCell(Guid itemId);
     }
 }

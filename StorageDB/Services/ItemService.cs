@@ -46,11 +46,5 @@ namespace StorageDB.Services
             else
                 return null;
         }
-
-        public float CountItemsPerCell(Guid itemId)
-        {
-            var itemSize = GetOne(itemId).Size;
-            return (1 / itemSize);
-        }
     }
 }

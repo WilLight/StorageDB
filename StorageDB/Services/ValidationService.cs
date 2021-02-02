@@ -134,7 +134,7 @@ namespace StorageDB.Services
                 OrderValidationModel order = new OrderValidationModel();
                 order.StartDate = d.DeliveryDate;
                 order.EndDate = d.DeliveryDate.AddYears(5);
-                order.Volume = (int)(d.Volume/_itemService.CountItemsPerCell(d.ItemId));
+                order.Volume = (int)MathF.Ceiling(d.Volume * _itemService.GetOne(d.ItemId).Size);
                 orderValidationModels.Add(order);
             }
 
@@ -145,7 +145,7 @@ namespace StorageDB.Services
                 order.EndDate = reservation.EndDate;
 
                 if(reservation.ItemId != default)
-                    order.Volume = (int)(reservation.Volume/_itemService.CountItemsPerCell(reservation.ItemId));
+                    order.Volume = (int)MathF.Ceiling(reservation.Volume * _itemService.GetOne(reservation.ItemId).Size);
                 else
                     order.Volume = reservation.Volume;
 
@@ -181,7 +181,7 @@ namespace StorageDB.Services
                 OrderValidationModel order = new OrderValidationModel();
                 order.StartDate = d.DeliveryDate;
                 order.EndDate = d.DeliveryDate.AddYears(5);
-                order.Volume = (int)(d.Volume/_itemService.CountItemsPerCell(d.ItemId));
+                order.Volume = (int)MathF.Ceiling(d.Volume * _itemService.GetOne(d.ItemId).Size);
                 orderValidationModels.Add(order);
             }
 
@@ -192,7 +192,7 @@ namespace StorageDB.Services
                 order.EndDate = r.EndDate;
 
                 if(r.ItemId != default)
-                    order.Volume = (int)(r.Volume/_itemService.CountItemsPerCell(r.ItemId));
+                    order.Volume = (int)MathF.Ceiling(r.Volume * _itemService.GetOne(r.ItemId).Size);
                 else
                     order.Volume = r.Volume;
 

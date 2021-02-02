@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Coding\\.NET\\StorageDB\\StorageDB\\StorageDB.csproj": {}
+    "c:\\Coding\\.NET\\StorageDB\\StorageDB\\StorageDB.csproj": {}
   },
   "projects": {
-    "C:\\Coding\\.NET\\StorageDB\\StorageDB\\StorageDB.csproj": {
+    "c:\\Coding\\.NET\\StorageDB\\StorageDB\\StorageDB.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Coding\\.NET\\StorageDB\\StorageDB\\StorageDB.csproj",
+        "projectUniqueName": "c:\\Coding\\.NET\\StorageDB\\StorageDB\\StorageDB.csproj",
         "projectName": "StorageDB",
-        "projectPath": "C:\\Coding\\.NET\\StorageDB\\StorageDB\\StorageDB.csproj",
+        "projectPath": "c:\\Coding\\.NET\\StorageDB\\StorageDB\\StorageDB.csproj",
         "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
-        "outputPath": "C:\\Coding\\.NET\\StorageDB\\StorageDB\\obj\\",
+        "outputPath": "c:\\Coding\\.NET\\StorageDB\\StorageDB\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
