@@ -156,7 +156,7 @@ namespace StorageDB.Services
 
             CheckStorageOverflow(orderValidationModels, _storageService.GetOne(delivery.StorageId).Capacity);
 
-            return false;
+            return !CheckStorageOverflow(orderValidationModels, _storageService.GetOne(delivery.StorageId).Capacity);
         }
 
         public bool ValidateReservationVolume(ReservationModel reservation)
