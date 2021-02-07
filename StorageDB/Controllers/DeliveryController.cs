@@ -66,7 +66,7 @@ namespace StorageDB.Controllers
                 return BadRequest(new { message = "There is no Item with such ItemId" });
 
             if (!_validationService.ValidateCustomer(delivery.ClientId))
-                return BadRequest(new { message = "There is no Item with such ItemId" });
+                return BadRequest(new { message = "There is no Customer with such CustomerId" });
 
             if (!_validationService.ValidateDeliveryVolume(delivery))
                 return BadRequest(new { message = "Delivery is over storage capacity" });
