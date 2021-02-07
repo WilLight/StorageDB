@@ -27,6 +27,16 @@ namespace StorageDB.Services
             return _dbDeliveryRepository.FindAll().OrderBy(item => item.Id);
         }
 
+        public IEnumerable<DeliveryModel> GetAllDeliveriesInStorage(Guid storageId)
+        {
+            return _dbDeliveryRepository.FindAllInStorage(storageId).OrderBy(item => item.Id);
+        }
+
+        public IEnumerable<DeliveryModel> GetAllDeliveriesWithCustomer(Guid customerId)
+        {
+            return _dbDeliveryRepository.FindAllWithCustomer(customerId).OrderBy(item => item.Id);
+        }
+
         public DeliveryModel GetOneDelivery(Guid id)
         {
             return _dbDeliveryRepository.FindOne(id);
@@ -35,7 +45,7 @@ namespace StorageDB.Services
         public DeliveryModel InsertOneDelivery(DeliveryModel delivery)
         {
             delivery.Id = Guid.NewGuid();
-            if(_dbDeliveryRepository.Insert(delivery) != null)
+            if (_dbDeliveryRepository.Insert(delivery) != null)
                 return delivery;
             else
                 return null;
@@ -43,7 +53,7 @@ namespace StorageDB.Services
 
         public DeliveryModel UpdateOneDelivery(DeliveryModel delivery)
         {
-            if(_dbDeliveryRepository.UpdateOne(delivery))
+            if (_dbDeliveryRepository.UpdateOne(delivery))
                 return delivery;
             else
                 return null;
@@ -52,6 +62,11 @@ namespace StorageDB.Services
         public IEnumerable<ReservationModel> GetAllReservations()
         {
             return _dbReservationRepository.FindAll().OrderBy(item => item.Id);
+        }
+
+        public IEnumerable<ReservationModel> GetAllReservationsInStorage(Guid storageId)
+        {
+            return _dbReservationRepository.FindAllInStorage(storageId).OrderBy(item => item.Id);
         }
 
         public IEnumerable<ReservationModel> GetReservationsOverlappingDateRange(DateTime startDate, DateTime endDate, Guid storageId)
@@ -67,7 +82,7 @@ namespace StorageDB.Services
         public ReservationModel InsertOneReservation(ReservationModel reservation)
         {
             reservation.Id = Guid.NewGuid();
-            if(_dbReservationRepository.Insert(reservation) != null)
+            if (_dbReservationRepository.Insert(reservation) != null)
                 return reservation;
             else
                 return null;
@@ -75,7 +90,7 @@ namespace StorageDB.Services
 
         public ReservationModel UpdateOneReservation(ReservationModel reservation)
         {
-            if(_dbReservationRepository.UpdateOne(reservation))
+            if (_dbReservationRepository.UpdateOne(reservation))
                 return reservation;
             else
                 return null;

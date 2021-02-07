@@ -37,26 +37,17 @@ namespace StorageDB.Services
 
         public bool ValidateStorage(Guid storageId)
         {
-            if (_storageService.GetOne(storageId) != null)
-                return true;
-            else
-                return false;
+            return _storageService.GetOne(storageId) != null ? true : false;
         }
 
         public bool ValidateDeliveryUpdate(DeliveryModel delivery)
         {
-            if(_orderService.GetOneDelivery(delivery.Id) != null)
-                return true;
-            else
-                return false;
+            return _orderService.GetOneDelivery(delivery.Id) != null ? true : false;
         }
 
         public bool ValidateReservationUpdate(ReservationModel reservation)
         {
-            if(_orderService.GetOneReservation(reservation.Id) != null)
-                return true;
-            else
-                return false;
+            return _orderService.GetOneReservation(reservation.Id) != null ? true : false;
         }
 
         public int CheckStorageOverflowRecursion(List<OrderValidationModel> orders, int storageSize)
@@ -65,7 +56,7 @@ namespace StorageDB.Services
             int ordersVolume = 0;
 
             foreach (var order in ordersCopy)
-            { 
+            {
                 var overlappingOrders = orders.Where(x => x.StartDate <= order.EndDate && x.EndDate >= order.StartDate).ToList();
 
                 ordersCopy.Except(overlappingOrders);
@@ -97,7 +88,7 @@ namespace StorageDB.Services
             var ordersCopy = orders;
 
             foreach (var order in ordersCopy)
-            { 
+            {
                 var overlappingOrders = orders.Where(x => x.StartDate <= order.EndDate && x.EndDate >= order.StartDate).ToList();
 
                 ordersCopy.Except(overlappingOrders);
@@ -115,10 +106,10 @@ namespace StorageDB.Services
 
         public bool ValidateDeliveryVolume(DeliveryModel delivery)
         {
-            var deliveries = _orderService.GetAllDeliveries().ToList();
+            var deliveries = _orderService.GetAllDeliveriesInStorage(delivery.StorageId).ToList();
             var overlappingReservations = _orderService.GetReservationsOverlappingDateRange(delivery.DeliveryDate, delivery.DeliveryDate.AddYears(5), delivery.StorageId);
             List<OrderValidationModel> orderValidationModels = new List<OrderValidationModel>();
-            
+
             if (deliveries.FirstOrDefault(x => x.Id == delivery.Id) == default)
             {
                 deliveries.Add(delivery);
@@ -128,7 +119,7 @@ namespace StorageDB.Services
                 deliveries.Remove(deliveries.First(x => x.Id == delivery.Id));
                 deliveries.Add(delivery);
             }
-            
+
             foreach (var d in deliveries)
             {
                 OrderValidationModel order = new OrderValidationModel();
@@ -144,7 +135,7 @@ namespace StorageDB.Services
                 order.StartDate = reservation.StartDate;
                 order.EndDate = reservation.EndDate;
 
-                if(reservation.ItemId != default)
+                if (reservation.ItemId != default)
                     order.Volume = (int)MathF.Ceiling(reservation.Volume * _itemService.GetOne(reservation.ItemId).Size);
                 else
                     order.Volume = reservation.Volume;
@@ -161,7 +152,7 @@ namespace StorageDB.Services
 
         public bool ValidateReservationVolume(ReservationModel reservation)
         {
-            var deliveries = _orderService.GetAllDeliveries();
+            var deliveries = _orderService.GetAllDeliveriesInStorage(reservation.StorageId);
             var overlappingReservations = _orderService.GetReservationsOverlappingDateRange(reservation.StartDate, reservation.EndDate, reservation.StorageId).ToList();
 
             if (overlappingReservations.FirstOrDefault(x => x.Id == reservation.Id) == default)
@@ -175,7 +166,7 @@ namespace StorageDB.Services
             }
 
             List<OrderValidationModel> orderValidationModels = new List<OrderValidationModel>();
-            
+
             foreach (var d in deliveries)
             {
                 OrderValidationModel order = new OrderValidationModel();
@@ -191,7 +182,7 @@ namespace StorageDB.Services
                 order.StartDate = r.StartDate;
                 order.EndDate = r.EndDate;
 
-                if(r.ItemId != default)
+                if (r.ItemId != default)
                     order.Volume = (int)MathF.Ceiling(r.Volume * _itemService.GetOne(r.ItemId).Size);
                 else
                     order.Volume = r.Volume;

@@ -26,5 +26,10 @@ namespace StorageDB.Data
         {
             return _liteDb.GetCollection<TModel>(ModelRepository).Find(x => x.StorageId == storageId);
         }
+
+        public IEnumerable<TModel> FindAllWithCustomer(Guid clientId)
+        {
+            return _liteDb.GetCollection<TModel>(ModelRepository).Find(x => x.ClientId == clientId);
+        }
     }
 }
