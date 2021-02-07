@@ -62,7 +62,7 @@ namespace StorageDB.Controllers
             if (!_validationService.ValidateStorage(delivery.StorageId))
                 return BadRequest(new { message = "StorageId does not point to existing storage" });
 
-            if (delivery.ItemId != default && !_validationService.ValidateItem(delivery.ItemId))
+            if (delivery.ItemId == default || _validationService.ValidateItem(delivery.ItemId))
                 return BadRequest(new { message = "There is no Item with such ItemId" });
 
             if (!_validationService.ValidateCustomer(delivery.ClientId))
