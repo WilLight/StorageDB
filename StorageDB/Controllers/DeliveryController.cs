@@ -90,7 +90,7 @@ namespace StorageDB.Controllers
                 if (!_validationService.ValidateCustomer(delivery.ClientId))
                     return BadRequest(new { message = "There is no Item with such ItemId" });
 
-                if (_validationService.ValidateDeliveryVolume(delivery))
+                if (!_validationService.ValidateDeliveryVolume(delivery))
                     return BadRequest(new { message = "Delivery is over storage capacity" });
 
                 var dto = _orderService.UpdateOneDelivery(delivery);
