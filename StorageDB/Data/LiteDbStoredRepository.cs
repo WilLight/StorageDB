@@ -5,7 +5,7 @@ using LiteDB;
 
 namespace StorageDB.Data
 {
-    public abstract class LiteDbStoredRepository<TModel> : LiteDbBaseRepository<TModel> where TModel: BaseStoredModel
+    public abstract class LiteDbStoredRepository<TModel> : LiteDbBaseRepository<TModel> where TModel : BaseStoredModel
     {
         private LiteDatabase _liteDb;
 
@@ -29,7 +29,7 @@ namespace StorageDB.Data
 
         public IEnumerable<TModel> FindAllWithCustomer(Guid clientId)
         {
-            return _liteDb.GetCollection<TModel>(ModelRepository).Find(x => x.ClientId == clientId);
+            return _liteDb.GetCollection<TModel>(ModelRepository).Find(x => x.CustomerId == clientId);
         }
     }
 }

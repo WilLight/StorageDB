@@ -6,7 +6,7 @@ namespace StorageDB.Models
     {
         public Guid StorageId { get; set; }
         public Guid ItemId { get; set; }
-        public Guid ClientId { get; set; }
+        public Guid CustomerId { get; set; }
         public int Volume { get; set; }
     }
 }

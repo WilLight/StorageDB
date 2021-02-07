@@ -65,7 +65,7 @@ namespace StorageDB.Controllers
             if (delivery.ItemId == default || !_validationService.ValidateItem(delivery.ItemId))
                 return BadRequest(new { message = "There is no Item with such ItemId" });
 
-            if (!_validationService.ValidateCustomer(delivery.ClientId))
+            if (!_validationService.ValidateCustomer(delivery.CustomerId))
                 return BadRequest(new { message = "There is no Customer with such CustomerId" });
 
             if (!_validationService.ValidateDeliveryVolume(delivery))
@@ -87,7 +87,7 @@ namespace StorageDB.Controllers
                 if (delivery.ItemId != default && !_validationService.ValidateItem(delivery.ItemId))
                     return BadRequest(new { message = "There is no Item with such ItemId" });
 
-                if (!_validationService.ValidateCustomer(delivery.ClientId))
+                if (!_validationService.ValidateCustomer(delivery.CustomerId))
                     return BadRequest(new { message = "There is no Item with such ItemId" });
 
                 if (!_validationService.ValidateDeliveryVolume(delivery))
